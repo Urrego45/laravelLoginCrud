@@ -12,8 +12,29 @@ class LibrosController extends Controller
     }
 
     public function leer(){
-        $libros = Libros::all()
+        $libros = Libros::all();
         return view('libros.leer', compact('libros'));
+    }
+
+    public function update(Request $request, Libros $libro){
+        
+        $request->validate([
+            'nombre'=>'required|string|max:225',
+            'descripcion'=>'required|string',
+            'autor'=>'required|string|max:225',
+        ]);
+
+        $libro->update($request->all());
+
+        return redirect()->back()->with('success', 'Libro actualizado con exito');
+    }
+
+    public function destroy($id)
+    {
+        $libro = Libros::findOrFail($id);
+        $libro->delete();
+
+        return redirect()->route('libros.leer')->with('success', 'Libro eliminado correctamente.');
     }
 
     public function store(Request $request){
@@ -30,7 +51,7 @@ class LibrosController extends Controller
 
         $libro->save();
 
-        return redirect()->back()->with('success', 'Libro creado con exito');
+        return redirect()->route('libros.leer')->with('success', 'Libro creado con exito');
     }
 
 }
